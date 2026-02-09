@@ -1,0 +1,401 @@
+// Smart Contract Auditor - Database Schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== Enums ====================
+
+enum ProtocolType {
+  DEX
+  LENDING
+  NFT
+  BRIDGE
+  STAKING
+  YIELD
+  GOVERNANCE
+  ORACLE
+  OTHER
+}
+
+enum Chain {
+  ETHEREUM
+  BSC
+  POLYGON
+  ARBITRUM
+  OPTIMISM
+  AVALANCHE
+  BASE
+  OTHER
+}
+
+enum Severity {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+  INFO
+}
+
+enum VulnCategory {
+  ACCESS_CONTROL
+  REENTRANCY
+  ARITHMETIC
+  LOGIC_ERROR
+  ORACLE_MANIPULATION
+  TOKEN_HANDLING
+  EXTERNAL_INTERACTION
+  DATA_VALIDATION
+  GAS_ISSUE
+  PROTOCOL_SPECIFIC
+}
+
+enum DetectionMethod {
+  STATIC_ANALYSIS
+  PATTERN_MATCH
+  AI_INFERENCE
+  FUZZING
+  MANUAL
+}
+
+enum ProjectStatus {
+  PENDING
+  INGESTING
+  ANALYZING
+  AUDITING
+  GENERATING_POC
+  COMPLETED
+  FAILED
+}
+
+enum VulnStatus {
+  DETECTED
+  VERIFIED
+  FALSE_POSITIVE
+  FIXED
+  ACKNOWLEDGED
+}
+
+enum AuditStatus {
+  QUEUED
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// ==================== Models ====================
+
+model Project {
+  id            String        @id @default(cuid())
+  githubUrl     String
+  name          String
+  version       String?
+  commitHash    String?
+  branch        String        @default("main")
+  protocolType  ProtocolType?
+  chains        Chain[]
+  description   String?
+  
+  // Metadata
+  totalContracts Int          @default(0)
+  totalLines     Int          @default(0)
+  
+  // Timestamps
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  // Relations
+  contracts     Contract[]
+  audits        Audit[]
+  dependencies  Dependency[]
+  
+  @@index([githubUrl])
+  @@index([protocolType])
+}
+
+model Contract {
+  id            String    @id @default(cuid())
+  projectId     String
+  filePath      String
+  name          String
+  sourceCode    String
+  bytecode      String?
+  
+  // Analysis data (stored as JSON)
+  ast           Json?
+  cfg           Json?
+  
+  // Metrics
+  lines         Int       @default(0)
+  complexity    Int       @default(0)
+  riskScore     Float     @default(0)
+  
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  // Relations
+  project       Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  functions     Function[]
+  vulnerabilities Vulnerability[]
+  
+  @@unique([projectId, filePath])
+  @@index([projectId])
+  @@index([name])
+}
+
+model Function {
+  id            String    @id @default(cuid())
+  contractId    String
+  name          String
+  visibility    String    // public, external, internal, private
+  stateMutability String? // pure, view, payable
+  signature     String
+  startLine     Int
+  endLine       Int
+  
+  // Analysis
+  parameters    Json      @default("[]")
+  returnTypes   Json      @default("[]")
+  modifiers     String[]
+  externalCalls Json      @default("[]")
+  stateChanges  Json      @default("[]")
+  
+  riskScore     Float     @default(0)
+  
+  // Relations
+  contract      Contract  @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  
+  @@index([contractId])
+  @@index([name])
+}
+
+model Dependency {
+  id            String    @id @default(cuid())
+  projectId     String
+  name          String
+  version       String
+  source        String    // npm, github, local
+  
+  // Relations
+  project       Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  
+  @@unique([projectId, name])
+}
+
+model Audit {
+  id            String      @id @default(cuid())
+  projectId     String
+  status        AuditStatus @default(QUEUED)
+  
+  // Configuration
+  config        Json        @default("{}")
+  
+  // Progress tracking
+  currentStage  String?
+  progress      Int         @default(0)
+  
+  // Results summary
+  totalFindings Int         @default(0)
+  criticalCount Int         @default(0)
+  highCount     Int         @default(0)
+  mediumCount   Int         @default(0)
+  lowCount      Int         @default(0)
+  infoCount     Int         @default(0)
+  
+  // Timing
+  startedAt     DateTime?
+  completedAt   DateTime?
+  duration      Int?        // seconds
+  
+  // Timestamps
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  
+  // Relations
+  project       Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  vulnerabilities Vulnerability[]
+  reports       Report[]
+  
+  @@index([projectId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Vulnerability {
+  id              String          @id @default(cuid())
+  auditId         String
+  contractId      String?
+  
+  // Classification
+  category        VulnCategory
+  severity        Severity
+  
+  // Details
+  title           String
+  description     String
+  
+  // Location
+  filePath        String?
+  startLine       Int?
+  endLine         Int?
+  codeSnippet     String?
+  
+  // Detection
+  detectionMethod DetectionMethod
+  confidence      Float           @default(0.5)
+  
+  // Status
+  status          VulnStatus      @default(DETECTED)
+  
+  // Remediation
+  remediation     String?
+  references      String[]
+  
+  // Timestamps
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  // Relations
+  audit           Audit           @relation(fields: [auditId], references: [id], onDelete: Cascade)
+  contract        Contract?       @relation(fields: [contractId], references: [id])
+  poc             ProofOfConcept?
+  
+  @@index([auditId])
+  @@index([severity])
+  @@index([category])
+  @@index([status])
+}
+
+model ProofOfConcept {
+  id              String    @id @default(cuid())
+  vulnerabilityId String    @unique
+  
+  // PoC content
+  code            String
+  setupCommands   String[]
+  executionCmd    String
+  
+  // Verification
+  verified        Boolean   @default(false)
+  executionLog    String?
+  expectedResult  String?
+  actualResult    String?
+  
+  // Impact
+  estimatedLoss   String?
+  
+  // Timestamps
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relations
+  vulnerability   Vulnerability @relation(fields: [vulnerabilityId], references: [id], onDelete: Cascade)
+}
+
+model Report {
+  id            String    @id @default(cuid())
+  auditId       String
+  
+  // Content
+  format        String    // markdown, pdf, json
+  content       String?
+  filePath      String?   // S3 path
+  
+  // Timestamps
+  createdAt     DateTime  @default(now())
+  
+  // Relations
+  audit         Audit     @relation(fields: [auditId], references: [id], onDelete: Cascade)
+  
+  @@index([auditId])
+}
+
+// ==================== Knowledge Base ====================
+
+model VulnerabilityPattern {
+  id            String        @id @default(cuid())
+  
+  // Classification
+  category      VulnCategory
+  subcategory   String?
+  severity      Severity
+  
+  // Pattern info
+  name          String
+  description   String
+  
+  // Detection patterns (JSON)
+  astPatterns   Json          @default("[]")
+  codePatterns  Json          @default("[]")
+  semanticRules Json          @default("[]")
+  
+  // PoC template
+  pocTemplate   String?
+  
+  // Remediation
+  remediation   String?
+  references    String[]
+  
+  // Source tracking
+  source        String?       // solodit, code4rena, etc.
+  sourceUrl     String?
+  
+  // Vector embedding ID (stored in Qdrant)
+  embeddingId   String?
+  
+  // Timestamps
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  @@index([category])
+  @@index([severity])
+  @@index([source])
+}
+
+model KnowledgeBaseEntry {
+  id            String    @id @default(cuid())
+  
+  // Source info
+  source        String    // solodit, code4rena, sherlock, cyfrin, etc.
+  sourceId      String?   // Original ID from source
+  sourceUrl     String?
+  
+  // Content
+  title         String
+  description   String
+  
+  // Classification
+  category      VulnCategory?
+  severity      Severity?
+  protocolType  ProtocolType?
+  
+  // Code examples
+  vulnerableCode String?
+  fixedCode      String?
+  pocCode        String?
+  
+  // Metadata
+  tags          String[]
+  chain         Chain?
+  protocol      String?
+  
+  // Vector embedding
+  embeddingId   String?
+  
+  // Timestamps
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@unique([source, sourceId])
+  @@index([source])
+  @@index([category])
+  @@index([severity])
+  @@index([protocolType])
+}
