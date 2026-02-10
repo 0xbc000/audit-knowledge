@@ -1002,5 +1002,45 @@ tools/
 | 02:00 | TBD | **📚 Stablecoin/CDP 漏洞知識庫**: 11 大類漏洞模式, 8 真實案例, 完整審計清單 |
 
 ---
+
+## 📊 Nightly Summary - 2026-02-11
+
+### 02:00 AM - Governance & DAO 攻擊模式知識庫
+
+**選題理由:** 現有知識庫完全缺少治理攻擊專門文件。Benchmark 列表中包含 Olympus (Governance)，且治理攻擊是損失最大的攻擊類型之一（Beanstalk $182M、Ronin $625M）。此主題填補重大缺口。
+
+**✅ 新增內容:**
+
+1. **governance-dao.md** (~17KB) - 新文件 `data/vulnerabilities/protocol-specific/`
+   - **10 大漏洞類別:**
+     1. Flash Loan Governance Attack（閃電貸治理攻擊）
+     2. Fake Proposal / Trojan Proposal（偽造提案 - CREATE2 攻擊）
+     3. Proposal Execution Ordering Attack（提案執行排序攻擊）
+     4. Low Quorum / Vote Manipulation（低法定人數操控）
+     5. Multi-sig Compromise（多簽被攻破）
+     6. Timelock Misconfiguration（時間鎖配置錯誤）
+     7. Delegation & Vote Counting Bugs（委託計票漏洞）
+     8. Governor Parameter Manipulation（治理參數操控）
+     9. Cross-Chain Governance Risks（跨鏈治理風險）
+     10. veToken / Vote-Escrow Attacks（veToken 攻擊）
+   - **8 個真實案例:** The DAO ($150M), Beanstalk ($182M), Ronin ($625M), Tornado Cash ($2.17M), Sonne Finance ($20M), Swerve ($1.3M), Compound (near-miss), Unleash Protocol ($3.9M, Dec 2025)
+   - **完整審計清單:** 6 大類 (投票機制/提案安全/時間鎖/多簽/委託/跨鏈) 22+ 檢查項
+   - **每個模式含:** 漏洞代碼 + 安全代碼 + 攻擊流程 + 檢測要點
+
+2. **vulnerability-loader.ts 更新**
+   - 新增 GOVERNANCE, DAO, GOVERNOR, VOTING, TIMELOCK, MULTISIG, VETOKEN 類型映射
+   - 自動載入 governance-dao.md
+
+**📊 知識庫統計 (Updated):**
+- 漏洞文件: **23 個** (~265KB) - 新增 governance-dao.md (~17KB)
+- 協議類型覆蓋: +GOVERNANCE, DAO, GOVERNOR, VOTING, TIMELOCK, MULTISIG, VETOKEN
+- Slither detectors: 31 個 (未新增)
+- Foundry templates: 6 個 (未新增)
+
+| Time | Commit | Description |
+|------|--------|-------------|
+| 02:00 | TBD | **📚 Governance & DAO 攻擊模式**: 10 大類漏洞, 8 真實案例 ($1B+ 總損失), 完整審計清單 |
+
+---
 *此文件由 nightly improvement job 自動更新*
-*最後更新: 2026-02-10 02:00 AM (Asia/Taipei)*
+*最後更新: 2026-02-11 02:00 AM (Asia/Taipei)*
