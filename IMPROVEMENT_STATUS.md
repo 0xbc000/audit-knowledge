@@ -1044,3 +1044,48 @@ tools/
 ---
 *此文件由 nightly improvement job 自動更新*
 *最後更新: 2026-02-11 02:00 AM (Asia/Taipei)*
+
+---
+
+## 📊 Nightly Summary - 2026-02-12
+
+### 02:00 AM - Cross-Chain Bridge 漏洞模式知識庫
+
+**選題理由:** 橋接是 Web3 損失最慘重的攻擊面（$2.8B+，佔 DeFi 總損失 ~40%）。現有知識庫的 BRIDGE 映射只指向 l2-specific.md 和 external-integration.md，缺少專門的橋接安全文件。Benchmark 列表中包含 Flare FAsset (Bridge) 和 Allbridge (Bridge)。最新案例 CrossCurve ($3M, Feb 2026) 展示了持續的橋接攻擊趨勢。
+
+**✅ 新增內容:**
+
+1. **bridge-crosschain.md** (~18KB) - 新文件 `data/vulnerabilities/protocol-specific/`
+   - **10 大漏洞類別:**
+     1. 消息驗證繞過 (Trusted Root 錯誤, 簽名驗證不完整, Gateway Bypass)
+     2. 私鑰/多簽管理漏洞 (低 Threshold, 單一 CEO 控制, Guardian Set 更新)
+     3. Lock/Mint 不一致性 (無抵押鑄造, Fee-on-Transfer, Wrapped Token 匯率)
+     4. 重放攻擊 (缺少 Nonce, Chain ID 缺失, 硬分叉重放)
+     5. 流動性池/Vault 攻擊 (閃電貸耗盡, Token 脫鉤)
+     6. Relayer/Oracle 操控 (審查/延遲, Oracle 數據篡改)
+     7. 升級與治理攻擊 (無 Timelock 升級)
+     8. 速率限制與緊急機制 (缺少限制, 暫停不完整, 大額無延遲)
+     9. L2 Canonical Bridge 特有風險 (Challenge Period, 消息重試, Sequencer 下線)
+     10. Token 映射與部署風險 (假 Token 映射, Decimals 不匹配)
+   - **11 個真實案例:** Ronin ($625M), Poly Network ($612M), BNB Bridge ($566M), Wormhole ($326M), Nomad ($190M), Multichain ($130M), Harmony ($100M), Orbit Chain ($81M), Qubit ($80M), Socket ($3.3M), CrossCurve ($3M, Feb 2026)
+   - **完整審計清單:** 6 大類 (消息驗證/資產會計/密鑰管理/速率限制/升級安全/Token 映射) 30+ 檢查項
+   - **每個模式含:** 漏洞代碼 + 安全代碼 + 檢測要點
+
+2. **vulnerability-loader.ts 更新**
+   - 新增 BRIDGE→bridge-crosschain.md (取代舊映射)
+   - 新增 CROSSCHAIN, WORMHOLE, LAYERZERO, CCIP, AXELAR, RELAYER, LOCK_MINT 類型映射
+
+**📊 知識庫統計 (Updated):**
+- 漏洞文件: **24 個** (~283KB) - 新增 bridge-crosschain.md (~18KB)
+- 協議類型覆蓋: +BRIDGE(enhanced), CROSSCHAIN, WORMHOLE, LAYERZERO, CCIP, AXELAR, RELAYER
+- 真實案例總覽: 橋接案例累計損失 $2.8B+
+- Slither detectors: 31 個 (未新增)
+- Foundry templates: 6 個 (未新增)
+
+| Time | Commit | Description |
+|------|--------|-------------|
+| 02:00 | TBD | **🌉 Cross-Chain Bridge 漏洞知識庫**: 10 大類漏洞, 11 真實案例 ($2.8B+ 總損失), 完整審計清單 |
+
+---
+*此文件由 nightly improvement job 自動更新*
+*最後更新: 2026-02-12 02:00 AM (Asia/Taipei)*
