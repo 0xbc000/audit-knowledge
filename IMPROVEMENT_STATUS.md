@@ -1089,3 +1089,46 @@ tools/
 ---
 *此文件由 nightly improvement job 自動更新*
 *最後更新: 2026-02-12 02:00 AM (Asia/Taipei)*
+
+## 📊 Nightly Summary - 2026-02-13
+
+### 02:00 AM - Proxy & Upgrade 漏洞模式知識庫
+
+**選題理由:** 可升級合約是 DeFi 最普遍的架構模式，也是損失最慘重的攻擊面之一（Parity $150M, UPCX $70M, Audius $6M）。現有知識庫缺少專門的 proxy/upgrade 安全文件。admin_security.md 中的 Slither detector 已涵蓋部分場景，但缺少完整的漏洞分類、代碼範例和檢測方法。此主題對每一個審計項目都高度相關。
+
+**✅ 新增內容:**
+
+1. **proxy-upgrade-patterns.md** (~15KB) - 新文件 `data/vulnerabilities/protocol-specific/`
+   - **10 大漏洞類別:**
+     1. Uninitialized Proxy/Implementation（未初始化 proxy — Wormhole, Parity）
+     2. Re-initialization Attack（重新初始化 — AllianceBlock）
+     3. Storage Layout Collision（存儲佈局碰撞 — Audius $6M）
+     4. Unauthorized Upgrade / Admin Key Compromise（未授權升級 — UPCX $70M）
+     5. UUPS-Specific: 缺少 onlyProxy、升級丟失 hooks、proxiableUUID 不一致
+     6. Beacon Proxy Risks（共享升級的放大效應）
+     7. Function Selector Collision（函數選擇器碰撞）
+     8. delegatecall to Untrusted Address（任意 delegatecall）
+     9. Diamond Proxy (EIP-2535) Risks（facet storage 衝突）
+     10. Upgrade Testing & Verification（升級測試清單）
+   - **6 個真實案例:** Parity ($150M), Wormhole ($10M bounty), Audius ($6M), AllianceBlock (caught), UPCX ($70M), USDGambit ($1.5M)
+   - **完整審計清單:** 6 大類 (初始化/Storage/存取控制/UUPS/通用/測試) 25+ 檢查項
+   - **每個模式含:** 漏洞代碼 + 安全代碼 + 攻擊流程 + 檢測要點
+
+2. **vulnerability-loader.ts 更新**
+   - 新增 PROXY, UPGRADE, UPGRADEABLE, UUPS, BEACON, DIAMOND, TRANSPARENT_PROXY 類型映射
+   - 自動載入 proxy-upgrade-patterns.md
+
+**📊 知識庫統計 (Updated):**
+- 漏洞文件: **25 個** (~298KB) - 新增 proxy-upgrade-patterns.md (~15KB)
+- 協議類型覆蓋: +PROXY, UPGRADE, UUPS, BEACON, DIAMOND
+- 真實案例累計損失: $237M+ (proxy/upgrade 相關)
+- Slither detectors: 31 個 (admin_security.py 已有 upgrade-no-timelock 等)
+- Foundry templates: 6 個
+
+| Time | Commit | Description |
+|------|--------|-------------|
+| 02:00 | TBD | **🔒 Proxy & Upgrade 漏洞知識庫**: 10 大類漏洞, 6 真實案例 ($237M+ 損失), 完整審計清單 |
+
+---
+*此文件由 nightly improvement job 自動更新*
+*最後更新: 2026-02-13 02:00 AM (Asia/Taipei)*
