@@ -1130,5 +1130,50 @@ tools/
 | 02:00 | TBD | **🔒 Proxy & Upgrade 漏洞知識庫**: 10 大類漏洞, 6 真實案例 ($237M+ 損失), 完整審計清單 |
 
 ---
+
+## 📊 Nightly Summary - 2026-02-14
+
+### 02:00 AM - Weird ERC20 Token Integration 漏洞知識庫
+
+**選題理由:** 幾乎每個 DeFi 審計都會遇到非標準 ERC20 token 整合問題，但現有知識庫缺少專門的 weird ERC20 文件。Fee-on-transfer、rebasing、missing return values、blocklist 等行為是最常見的漏洞來源之一（Balancer $500K, lendf.me $25M, Harvest $34M, Beanstalk $182M）。此主題對所有協議類型（DEX, Lending, Vault, Bridge）都高度相關。
+
+**✅ 新增內容:**
+
+1. **weird-erc20-tokens.md** (~14KB) - 新文件 `data/vulnerabilities/protocol-specific/`
+   - **15 大漏洞類別:**
+     1. Fee-on-Transfer Tokens（Balancer STA $500K）
+     2. Rebasing Tokens（AMPL, stETH 快取不一致）
+     3. Missing Return Values（USDT, BNB — SafeERC20）
+     4. Blocklist/Blacklist Tokens（USDC, USDT 資金鎖定）
+     5. Low/High Decimal Tokens（GUSD 2 decimals, YAM 24 decimals）
+     6. Pausable Tokens（清算路徑中斷）
+     7. Approval Race Condition（USDT 非零→非零 revert）
+     8. Flash Mintable Tokens（DAI, totalSupply 操控）
+     9. Double Entry Point / Multiple Addresses（Compound cTUSD $12.3M 風險）
+     10. ERC-777 Hook Reentrancy（imBTC/Uniswap $300K, lendf.me $25M）
+     11. Revert on Zero Value Transfers（LEND）
+     12. Revert on Large Values / uint96 Tokens（UNI, COMP）
+     13. Upgradeable Tokens（USDC, USDT 語義變化風險）
+     14. Non-Standard Permit / DAI-style（DAI, RAI）
+     15. Transfer Hook Tokens（ERC-1363, ERC-4524）
+   - **8 個真實案例:** Balancer STA ($500K), imBTC/Uniswap ($300K), lendf.me ($25M), BNB/Uniswap (卡住), Compound cTUSD ($12.3M risk), Harvest ($34M), Beanstalk ($182M), EtherDelta (code injection)
+   - **完整審計清單:** 6 大類 (Transfer/餘額精度/Approval/特殊行為/假設驗證/防禦性程式設計) 24+ 檢查項
+   - **每個模式含:** 漏洞代碼 + 安全代碼 + 檢測要點
+
+2. **vulnerability-loader.ts 更新**
+   - 新增 TOKEN, ERC20, WEIRD_TOKEN, FEE_ON_TRANSFER, REBASING, PERMISSIONLESS 類型映射
+   - 自動載入 weird-erc20-tokens.md
+
+**📊 知識庫統計 (Updated):**
+- 漏洞文件: **26 個** (~312KB) - 新增 weird-erc20-tokens.md (~14KB)
+- 協議類型覆蓋: +TOKEN, ERC20, WEIRD_TOKEN, FEE_ON_TRANSFER, REBASING, PERMISSIONLESS
+- Slither detectors: 31 個 (未新增)
+- Foundry templates: 6 個 (未新增)
+
+| Time | Commit | Description |
+|------|--------|-------------|
+| 02:00 | 9a66629b | **🪙 Weird ERC20 Token Integration 漏洞知識庫**: 15 大類非標準 token 行為, 8 真實案例 ($242M+ 損失), 完整審計清單 |
+
+---
 *此文件由 nightly improvement job 自動更新*
-*最後更新: 2026-02-13 02:00 AM (Asia/Taipei)*
+*最後更新: 2026-02-14 02:00 AM (Asia/Taipei)*
