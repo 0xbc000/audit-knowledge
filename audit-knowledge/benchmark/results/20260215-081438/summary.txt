@@ -1,0 +1,16 @@
+[revert-lend-2024] R=0.545 P=0.667 F1=0.6 Dup=0 (6/11 found, 3 FP, 0 dup)
+[zaros-2025] SKIPPED — source_not_found
+[raac-2025] SKIPPED — source_not_found
+[wise-lending-2024] R=0 P=0 F1=0 Dup=0 (0/2 found, 8 FP, 0 dup)
+[decent-2024] R=0.75 P=0.6 F1=0.667 Dup=0 (3/4 found, 2 FP, 0 dup)
+[thorchain-2024] R=1 P=0.4 F1=0.571 Dup=0 (2/2 found, 3 FP, 0 dup)
+[size-2024] R=0 P=0 F1=0 Dup=0 (0/4 found, 7 FP, 0 dup)
+[sentiment-v2-2024] R=0 P=0 F1=0 Dup=0 (0/1 found, 7 FP, 0 dup)
+
+=== AGGREGATE ===
+Cases:     6
+Recall:    38.3%
+Precision: 27.8%
+F1:        30.6%
+Dup Ratio: 0.0%
+Overall:   11/24 findings detected

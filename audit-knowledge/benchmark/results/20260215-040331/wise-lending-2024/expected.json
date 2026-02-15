@@ -1,0 +1,18 @@
+[
+  {
+    "id": "H-01",
+    "severity": "high",
+    "root_cause": "reentrancy:guard-reset-via-receive",
+    "title": "receive() 重置 reentrancy guard",
+    "contract": "WiseLending",
+    "function": "receive"
+  },
+  {
+    "id": "H-02",
+    "severity": "high",
+    "root_cause": "business-logic:debt-elimination",
+    "title": "用戶可免費消除債務",
+    "contract": "WiseLending",
+    "function": "paybackExactShares"
+  }
+]

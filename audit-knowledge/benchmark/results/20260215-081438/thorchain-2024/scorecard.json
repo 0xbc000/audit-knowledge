@@ -1,0 +1,21 @@
+{
+  "case_id": "thorchain-2024",
+  "protocol_type": "cross-chain-bridge",
+  "expected_count": 2,
+  "reported_count": 5,
+  "unique_reported": 5,
+  "true_positives": 2,
+  "false_positives": 3,
+  "duplicates": 0,
+  "missed": 0,
+  "recall": 1,
+  "precision": 0.4,
+  "f1": 0.571,
+  "duplicate_ratio": 0,
+  "missed_findings": [],
+  "false_positive_list": [
+    "External call without reentrancy guard",
+    "ERC721 callback reentrancy risk",
+    "WETH unwrap/fallback logic error"
+  ]
+}

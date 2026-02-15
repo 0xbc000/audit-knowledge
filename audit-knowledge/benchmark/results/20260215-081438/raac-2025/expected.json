@@ -1,0 +1,34 @@
+[
+  {
+    "id": "H-01",
+    "severity": "high",
+    "root_cause": "oracle:staleness-unchecked",
+    "title": "getNFTPrice 未檢查 timestamp",
+    "contract": "LendingPool",
+    "function": "getNFTPrice"
+  },
+  {
+    "id": "H-02",
+    "severity": "high",
+    "root_cause": "business-logic:hardcoded-return",
+    "title": "getExchangeRate 回傳常數",
+    "contract": "StabilityPool",
+    "function": "getExchangeRate"
+  },
+  {
+    "id": "M-01",
+    "severity": "medium",
+    "root_cause": "liquidation:min-bid-missing",
+    "title": "拍賣無最低首次出價",
+    "contract": "NFTLiquidator",
+    "function": "placeBid"
+  },
+  {
+    "id": "M-02",
+    "severity": "medium",
+    "root_cause": "reentrancy:external-call-no-guard",
+    "title": "buyBackNFT 無 reentrancy guard",
+    "contract": "NFTLiquidator",
+    "function": "buyBackNFT"
+  }
+]

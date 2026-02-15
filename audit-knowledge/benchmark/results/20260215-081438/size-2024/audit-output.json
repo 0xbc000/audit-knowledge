@@ -1,0 +1,67 @@
+{
+  "findings": [
+    {
+      "id": "F-01",
+      "severity": "medium",
+      "root_cause": "interest:same-block-free-loan",
+      "title": "Same-block borrow/repay yields zero interest",
+      "contract": "script/BuyCreditMarket.s.sol",
+      "function": "Interest calculation may allow same-block free loans",
+      "matches": 1
+    },
+    {
+      "id": "F-03",
+      "severity": "high",
+      "root_cause": "access-control:missing-auth",
+      "title": "Missing access control on sensitive function",
+      "contract": "src/Size.sol",
+      "function": "function withdraw(WithdrawParams calldata params) external payable override(ISiz",
+      "matches": 1
+    },
+    {
+      "id": "F-08",
+      "severity": "high",
+      "root_cause": "oracle:staleness-unchecked",
+      "title": "Oracle price staleness not checked",
+      "contract": "src/libraries/AccountingLibrary.sol",
+      "function": "Oracle call without staleness check",
+      "matches": 1
+    },
+    {
+      "id": "F-10",
+      "severity": "high",
+      "root_cause": "reentrancy:erc721-callback",
+      "title": "ERC721 callback reentrancy risk",
+      "contract": "src/libraries/DepositTokenLibrary.sol",
+      "function": "safeTransferFrom/safeMint without nonReentrant",
+      "matches": 1
+    },
+    {
+      "id": "F-11",
+      "severity": "high",
+      "root_cause": "token:rebasing-token-theft",
+      "title": "Rebasing/fee-on-transfer token not handled",
+      "contract": "src/libraries/DepositTokenLibrary.sol",
+      "function": "Token transfer without balance-before-after check",
+      "matches": 1
+    },
+    {
+      "id": "F-29",
+      "severity": "high",
+      "root_cause": "reentrancy:external-call-no-guard",
+      "title": "External call without reentrancy guard",
+      "contract": "test/invariants/TargetFunctions.sol",
+      "function": "weth.transfer(user, MAX_AMOUNT_WETH);",
+      "matches": 1
+    },
+    {
+      "id": "F-60",
+      "severity": "high",
+      "root_cause": "token:weth-fallback-logic",
+      "title": "WETH unwrap/fallback logic error",
+      "contract": "test/mocks/WETH.sol",
+      "function": "WETH unwrap with fallback handling",
+      "matches": 1
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "findings": [
+    {
+      "id": "F-01",
+      "severity": "high",
+      "root_cause": "access-control:missing-auth",
+      "title": "Missing access control on sensitive function",
+      "contract": "src/V3Oracle.sol",
+      "function": "function setOracleMode(address token, Mode mode) external {",
+      "matches": 1
+    },
+    {
+      "id": "F-02",
+      "severity": "high",
+      "root_cause": "oracle:staleness-unchecked",
+      "title": "Oracle price staleness not checked",
+      "contract": "src/V3Oracle.sol",
+      "function": "Oracle call without staleness check",
+      "matches": 1
+    },
+    {
+      "id": "F-03",
+      "severity": "high",
+      "root_cause": "math:negative-tick-rounding",
+      "title": "Negative tick/value rounding error",
+      "contract": "src/V3Oracle.sol",
+      "function": "Integer division with potential negative rounding issue",
+      "matches": 1
+    },
+    {
+      "id": "F-04",
+      "severity": "medium",
+      "root_cause": "interest:same-block-free-loan",
+      "title": "Same-block borrow/repay yields zero interest",
+      "contract": "src/V3Oracle.sol",
+      "function": "Interest calculation may allow same-block free loans",
+      "matches": 1
+    },
+    {
+      "id": "F-06",
+      "severity": "high",
+      "root_cause": "reentrancy:erc721-callback",
+      "title": "ERC721 callback reentrancy risk",
+      "contract": "src/V3Vault.sol",
+      "function": "safeTransferFrom/safeMint without nonReentrant",
+      "matches": 2
+    },
+    {
+      "id": "F-07",
+      "severity": "high",
+      "root_cause": "dos:callback-griefing",
+      "title": "Callback-based DoS / griefing",
+      "contract": "src/V3Vault.sol",
+      "function": "Liquidation with external callback (griefing risk)",
+      "matches": 1
+    },
+    {
+      "id": "F-11",
+      "severity": "high",
+      "root_cause": "reentrancy:external-call-no-guard",
+      "title": "External call without reentrancy guard",
+      "contract": "src/automators/Automator.sol",
+      "function": "(bool sent,) = to.call{value: balance}(\"\");",
+      "matches": 2
+    },
+    {
+      "id": "F-13",
+      "severity": "high",
+      "root_cause": "token:weth-fallback-logic",
+      "title": "WETH unwrap/fallback logic error",
+      "contract": "src/automators/Automator.sol",
+      "function": "WETH unwrap with fallback handling",
+      "matches": 1
+    },
+    {
+      "id": "F-14",
+      "severity": "high",
+      "root_cause": "input-validation:permit2-token-unverified",
+      "title": "Permit2 token address not verified",
+      "contract": "src/interfaces/IVault.sol",
+      "function": "Permit2 integration without token verification",
+      "matches": 1
+    }
+  ]
+}

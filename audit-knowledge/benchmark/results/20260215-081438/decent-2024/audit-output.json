@@ -1,0 +1,49 @@
+{
+  "findings": [
+    {
+      "id": "F-01",
+      "severity": "high",
+      "root_cause": "reentrancy:external-call-no-guard",
+      "title": "External call without reentrancy guard",
+      "contract": "script/OnchainScripts.s.sol",
+      "function": "(address(utbLookup[chain]).call{value: value}(callPayload));",
+      "matches": 2
+    },
+    {
+      "id": "F-02",
+      "severity": "high",
+      "root_cause": "token:weth-fallback-logic",
+      "title": "WETH unwrap/fallback logic error",
+      "contract": "src/UTB.sol",
+      "function": "WETH unwrap with fallback handling",
+      "matches": 1
+    },
+    {
+      "id": "F-05",
+      "severity": "high",
+      "root_cause": "cross-chain:gas-insufficient",
+      "title": "Cross-chain gas parameter user-controlled",
+      "contract": "src/bridge_adapters/stargate/IStargateRouter.sol",
+      "function": "LayerZero gas parameter without minimum enforcement",
+      "matches": 1
+    },
+    {
+      "id": "F-06",
+      "severity": "high",
+      "root_cause": "access-control:missing-auth",
+      "title": "Missing access control on sensitive function",
+      "contract": "src/interfaces/IUTB.sol",
+      "function": "function setExecutor(address _executor) external;",
+      "matches": 3
+    },
+    {
+      "id": "F-09",
+      "severity": "high",
+      "root_cause": "token:rebasing-token-theft",
+      "title": "Rebasing/fee-on-transfer token not handled",
+      "contract": "test/helpers/DegenVault.sol",
+      "function": "Token transfer without balance-before-after check",
+      "matches": 1
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "case_id": "wise-lending-2024",
+  "protocol_type": "lending",
+  "expected_count": 2,
+  "reported_count": 0,
+  "unique_reported": 0,
+  "true_positives": 0,
+  "false_positives": 0,
+  "duplicates": 0,
+  "missed": 2,
+  "recall": 0,
+  "precision": 0,
+  "f1": 0,
+  "duplicate_ratio": 0,
+  "missed_findings": [
+    "H-01: receive() 重置 reentrancy guard",
+    "H-02: 用戶可免費消除債務"
+  ],
+  "false_positive_list": []
+}

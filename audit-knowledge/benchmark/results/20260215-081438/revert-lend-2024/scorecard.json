@@ -1,0 +1,27 @@
+{
+  "case_id": "revert-lend-2024",
+  "protocol_type": "lending",
+  "expected_count": 11,
+  "reported_count": 9,
+  "unique_reported": 9,
+  "true_positives": 6,
+  "false_positives": 3,
+  "duplicates": 0,
+  "missed": 5,
+  "recall": 0.545,
+  "precision": 0.667,
+  "f1": 0.6,
+  "duplicate_ratio": 0,
+  "missed_findings": [
+    "H-03: transform() 未驗證 tokenId",
+    "M-01: 繞過 collateral limit",
+    "M-02: AutoRange gas griefing",
+    "M-03: 無 minLoanSize 導致清算無利可圖",
+    "M-05: setReserveFactor 未更新利息"
+  ],
+  "false_positive_list": [
+    "Oracle price staleness not checked",
+    "External call without reentrancy guard",
+    "WETH unwrap/fallback logic error"
+  ]
+}

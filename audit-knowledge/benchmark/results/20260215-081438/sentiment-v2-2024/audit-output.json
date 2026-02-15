@@ -1,0 +1,67 @@
+{
+  "findings": [
+    {
+      "id": "F-01",
+      "severity": "high",
+      "root_cause": "access-control:missing-auth",
+      "title": "Missing access control on sensitive function",
+      "contract": "protocol-v2/src/Pool.sol",
+      "function": "function setPoolCap(uint256 poolId, uint128 poolCap) external {",
+      "matches": 2
+    },
+    {
+      "id": "F-02",
+      "severity": "high",
+      "root_cause": "reentrancy:erc721-callback",
+      "title": "ERC721 callback reentrancy risk",
+      "contract": "protocol-v2/src/Pool.sol",
+      "function": "safeTransferFrom/safeMint without nonReentrant",
+      "matches": 1
+    },
+    {
+      "id": "F-03",
+      "severity": "medium",
+      "root_cause": "interest:same-block-free-loan",
+      "title": "Same-block borrow/repay yields zero interest",
+      "contract": "protocol-v2/src/Pool.sol",
+      "function": "Interest calculation may allow same-block free loans",
+      "matches": 1
+    },
+    {
+      "id": "F-05",
+      "severity": "high",
+      "root_cause": "dos:callback-griefing",
+      "title": "Callback-based DoS / griefing",
+      "contract": "protocol-v2/src/PositionManager.sol",
+      "function": "Liquidation with external callback (griefing risk)",
+      "matches": 1
+    },
+    {
+      "id": "F-10",
+      "severity": "high",
+      "root_cause": "reentrancy:external-call-no-guard",
+      "title": "External call without reentrancy guard",
+      "contract": "protocol-v2/src/SuperPoolFactory.sol",
+      "function": "IERC20(superPool).transfer(DEAD_ADDRESS, shares);",
+      "matches": 1
+    },
+    {
+      "id": "F-15",
+      "severity": "high",
+      "root_cause": "business-logic:hardcoded-return",
+      "title": "Hardcoded return value in critical function",
+      "contract": "protocol-v2/src/lens/SuperPoolLens.sol",
+      "function": "if (totalAssets == 0) return 0;",
+      "matches": 1
+    },
+    {
+      "id": "F-16",
+      "severity": "high",
+      "root_cause": "oracle:staleness-unchecked",
+      "title": "Oracle price staleness not checked",
+      "contract": "protocol-v2/src/oracle/ChainlinkEthOracle.sol",
+      "function": "Oracle call without staleness check",
+      "matches": 1
+    }
+  ]
+}

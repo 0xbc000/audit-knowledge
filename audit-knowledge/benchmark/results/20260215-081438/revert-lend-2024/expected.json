@@ -1,0 +1,90 @@
+[
+  {
+    "id": "H-01",
+    "severity": "high",
+    "root_cause": "input-validation:permit2-token-unverified",
+    "title": "Permit2 未驗證 token 地址",
+    "contract": "V3Vault",
+    "function": "deposit"
+  },
+  {
+    "id": "H-02",
+    "severity": "high",
+    "root_cause": "reentrancy:erc721-callback",
+    "title": "onERC721Received 重入攻擊",
+    "contract": "V3Vault",
+    "function": "onERC721Received"
+  },
+  {
+    "id": "H-03",
+    "severity": "high",
+    "root_cause": "input-validation:tokenid-unverified",
+    "title": "transform() 未驗證 tokenId",
+    "contract": "V3Vault",
+    "function": "transform"
+  },
+  {
+    "id": "H-04",
+    "severity": "high",
+    "root_cause": "access-control:missing-auth",
+    "title": "V3Utils.execute() 無權限控制",
+    "contract": "V3Utils",
+    "function": "execute"
+  },
+  {
+    "id": "H-05",
+    "severity": "high",
+    "root_cause": "math:negative-tick-rounding",
+    "title": "TWAP 負數 tick 未向下取整",
+    "contract": "V3Oracle",
+    "function": "_getReferenceTokenPriceX96"
+  },
+  {
+    "id": "H-06",
+    "severity": "high",
+    "root_cause": "dos:callback-griefing",
+    "title": "惡意 onERC721Received 阻止清算",
+    "contract": "V3Vault",
+    "function": "liquidate"
+  },
+  {
+    "id": "M-01",
+    "severity": "medium",
+    "root_cause": "limit-bypass:collateral-cap",
+    "title": "繞過 collateral limit",
+    "contract": "V3Vault",
+    "function": "createLoan"
+  },
+  {
+    "id": "M-02",
+    "severity": "medium",
+    "root_cause": "dos:gas-griefing",
+    "title": "AutoRange gas griefing",
+    "contract": "AutoRange",
+    "function": "executeWithVault"
+  },
+  {
+    "id": "M-03",
+    "severity": "medium",
+    "root_cause": "economic:unprofitable-liquidation",
+    "title": "無 minLoanSize 導致清算無利可圖",
+    "contract": "V3Vault",
+    "function": "liquidate"
+  },
+  {
+    "id": "M-04",
+    "severity": "medium",
+    "root_cause": "interest:same-block-free-loan",
+    "title": "同區塊免息貸款",
+    "contract": "V3Vault",
+    "function": "borrow"
+  },
+  {
+    "id": "M-05",
+    "severity": "medium",
+    "root_cause": "state-update:missing-accrue",
+    "title": "setReserveFactor 未更新利息",
+    "contract": "V3Vault",
+    "function": "setReserveFactor"
+  }
+]
