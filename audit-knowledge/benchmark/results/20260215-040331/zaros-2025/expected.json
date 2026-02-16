@@ -1,0 +1,18 @@
+[
+  {
+    "id": "C-01",
+    "severity": "critical",
+    "root_cause": "business-logic:weight-allocation-sum",
+    "title": "Weight distribution bug - totalWeight = weight 而非 N*weight",
+    "contract": "Vault",
+    "function": "updateVaultAndCreditDelegationWeight"
+  },
+  {
+    "id": "H-01",
+    "severity": "high",
+    "root_cause": "business-logic:comparison-sign-inversion",
+    "title": "比較運算符 .lt() vs .gt() 反轉",
+    "contract": "CreditDelegationBranch",
+    "function": "settleVaultDebts"
+  }
+]

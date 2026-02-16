@@ -1,0 +1,254 @@
+[
+  {
+    "id": "AP-01",
+    "name": "Missing Access Control",
+    "root_cause": "access-control:missing-auth",
+    "severity": "high-critical",
+    "frequency": "very-high",
+    "protocol_types": ["all"],
+    "description": "外部/公開函數缺少 onlyOwner/onlyRole 修飾符，任何人可呼叫敏感操作",
+    "check_steps": [
+      "列出所有 external/public 函數",
+      "標記修改 state 的函數（特別是 set*/update*/withdraw*/transfer*）",
+      "確認每個敏感函數都有 access control modifier",
+      "檢查 initializer 是否可重複呼叫",
+      "檢查 proxy 合約的 admin 函數"
+    ],
+    "grep_patterns": [
+      "function set.*external",
+      "function update.*external",
+      "function withdraw.*external",
+      "function transfer.*public"
+    ],
+    "test_template": "// Foundry test\nfunction test_unauthorizedAccess() public {\n    vm.prank(attacker);\n    // Should revert\n    vm.expectRevert();\n    target.sensitiveFunction();\n}",
+    "real_cases": ["decent-2024:H-01 (setRouter)", "thorchain-2024:H-02 (transferOut)", "revert-lend-2024:H-04 (V3Utils.execute)"]
+  },
+  {
+    "id": "AP-02",
+    "name": "Callback Reentrancy",
+    "root_cause": "reentrancy:callback-based",
+    "severity": "high",
+    "frequency": "high",
+    "protocol_types": ["lending", "nft", "vault"],
+    "description": "ERC721/ERC1155/ERC777 callback（onERC721Received 等）在狀態更新完成前被觸發，允許重入",
+    "check_steps": [
+      "搜尋所有 safeTransferFrom / safeMint / _safeMint 呼叫",
+      "檢查 callback 觸發點是否在狀態更新之後（CEI pattern）",
+      "確認 reentrancy guard 覆蓋所有入口點",
+      "檢查 receive() / fallback() 是否會重置 guard",
+      "特別注意 ERC721 的 onERC721Received 和 ERC1155 的 onERC1155Received"
+    ],
+    "grep_patterns": [
+      "safeTransferFrom",
+      "safeMint",
+      "_safeMint",
+      "onERC721Received",
+      "onERC1155Received",
+      "receive() external payable"
+    ],
+    "test_template": "// Foundry reentrancy PoC\ncontract MaliciousReceiver {\n    ITarget target;\n    function onERC721Received(address,address,uint256,bytes calldata) external returns(bytes4) {\n        // Re-enter target\n        target.vulnerableFunction();\n        return this.onERC721Received.selector;\n    }\n}",
+    "real_cases": ["revert-lend-2024:H-02 (onERC721Received)", "wise-lending-2024:H-01 (receive() guard reset)", "raac-2025:M-02 (buyBackNFT)"]
+  },
+  {
+    "id": "AP-03",
+    "name": "Math Rounding/Precision Error",
+    "root_cause": "math:rounding-precision",
+    "severity": "high-medium",
+    "frequency": "very-high",
+    "protocol_types": ["all"],
+    "description": "整數除法截斷、精度損失、負數取整方向錯誤導致資金計算偏差",
+    "check_steps": [
+      "搜尋所有除法運算，確認是否先乘後除",
+      "檢查 negative number 的除法取整方向（Solidity 向零取整）",
+      "確認 share/asset 轉換是否 round up/down correctly（deposit round down, withdraw round up）",
+      "用極端值測試：1 wei, type(uint256).max, 很小的分母",
+      "檢查百分比計算：fee=0%, fee=100% 邊界"
+    ],
+    "grep_patterns": [
+      "/ ",
+      "mulDiv",
+      "FullMath",
+      "1e18",
+      "PRECISION"
+    ],
+    "test_template": "function test_precisionLoss() public {\n    // Tiny amount should not round to 0 shares\n    uint256 shares = vault.deposit(1, user);\n    assertGt(shares, 0, 'precision loss: 0 shares for nonzero deposit');\n    \n    // Check rounding direction favors protocol\n    uint256 assets = vault.redeem(shares, user, user);\n    assertLe(assets, 1, 'rounding should favor vault');\n}",
+    "real_cases": ["revert-lend-2024:H-05 (TWAP negative tick)", "size-2024:H-01 (swap fee)", "quantamm-2024 (various math)"]
+  },
+  {
+    "id": "AP-04",
+    "name": "Oracle Staleness/Manipulation",
+    "root_cause": "oracle:staleness-manipulation",
+    "severity": "high",
+    "frequency": "high",
+    "protocol_types": ["lending", "dex", "perp-dex"],
+    "description": "價格 oracle 未檢查 timestamp 新鮮度、可被閃電貸操縱、或 TWAP 窗口太短",
+    "check_steps": [
+      "找到所有 oracle 呼叫（latestRoundData, getPrice, observe 等）",
+      "確認 updatedAt / timestamp 有被檢查",
+      "確認有 staleness threshold（通常 1h-24h）",
+      "檢查 TWAP 窗口長度（<10min 容易被操縱）",
+      "確認 sequencer uptime check（L2 必要）",
+      "測試 oracle 回傳 0 或負數的處理"
+    ],
+    "grep_patterns": [
+      "latestRoundData",
+      "getPrice",
+      "observe",
+      "consult",
+      "updatedAt",
+      "staleness"
+    ],
+    "test_template": "function test_staleOracle() public {\n    // Warp time forward past staleness threshold\n    vm.warp(block.timestamp + 25 hours);\n    // Should revert or use fallback\n    vm.expectRevert('stale price');\n    oracle.getPrice(token);\n}",
+    "real_cases": ["raac-2025:H-01 (timestamp unused)", "revert-lend-2024:H-05 (TWAP tick)", "sentiment-v2-2024 (oracle issues)"]
+  },
+  {
+    "id": "AP-05",
+    "name": "Weight/Sum Invariant Violation",
+    "root_cause": "business-logic:weight-sum",
+    "severity": "critical",
+    "frequency": "medium",
+    "protocol_types": ["vault", "dex", "perp-dex", "governance"],
+    "description": "權重分配、份額計算、或比例分配中 sum(parts) != total 的邏輯錯誤",
+    "check_steps": [
+      "找到所有 weight/share/allocation 分配邏輯",
+      "用 2-3 個參與者手算，驗證 sum = total",
+      "特別注意 loop 中的 set vs accumulate（= vs +=）",
+      "檢查 0 參與者、1 參與者的邊界",
+      "確認 percentage 不超過 100%"
+    ],
+    "grep_patterns": [
+      "weight",
+      "totalWeight",
+      "allocation",
+      "share",
+      "proportion",
+      "basis"
+    ],
+    "test_template": "function test_weightSumInvariant() public {\n    // Add 3 participants\n    vault.addParticipant(a, 100);\n    vault.addParticipant(b, 100);\n    vault.addParticipant(c, 100);\n    // Total weight should be 300, not 100\n    assertEq(vault.totalWeight(), 300);\n}",
+    "real_cases": ["zaros-2025:C-01 (totalWeight = weight instead of N*weight)"]
+  },
+  {
+    "id": "AP-06",
+    "name": "Unverified Input Parameters",
+    "root_cause": "input-validation:unverified",
+    "severity": "high",
+    "frequency": "high",
+    "protocol_types": ["all"],
+    "description": "函數參數（token 地址、tokenId、amount 等）未被驗證就使用",
+    "check_steps": [
+      "列出所有接受 address/tokenId 參數的函數",
+      "確認參數是否與 msg.sender 的授權匹配",
+      "檢查 token address 是否在白名單中",
+      "確認 tokenId 歸屬（ownerOf check）",
+      "檢查 amount > 0 和 amount <= balance"
+    ],
+    "grep_patterns": [
+      "function .*(address token",
+      "function .*(uint256 tokenId",
+      "function .*(address _token"
+    ],
+    "test_template": "function test_unverifiedToken() public {\n    // Pass a malicious token address\n    vm.prank(attacker);\n    vm.expectRevert();\n    vault.deposit(maliciousToken, amount);\n}",
+    "real_cases": ["revert-lend-2024:H-01 (Permit2 token)", "revert-lend-2024:H-03 (tokenId in transform)"]
+  },
+  {
+    "id": "AP-07",
+    "name": "Cross-Chain Gas/Encoding",
+    "root_cause": "cross-chain:gas-encoding",
+    "severity": "high",
+    "frequency": "medium",
+    "protocol_types": ["cross-chain-bridge"],
+    "description": "跨鏈消息 gas 不足導致永久阻塞、ABI 編碼錯誤導致資金鎖定",
+    "check_steps": [
+      "檢查跨鏈 send 的 gas limit 是否足夠目標鏈執行",
+      "確認 abi.encode vs abi.encodePacked 用法正確",
+      "檢查 refund 地址編碼（bytes vs address）",
+      "確認失敗時的 retry/refund 機制",
+      "測試目標鏈 gas price spike 情境"
+    ],
+    "grep_patterns": [
+      "lzSend",
+      "sendFrom",
+      "bridge(",
+      "abi.encode",
+      "adapterParams",
+      "dstGas"
+    ],
+    "test_template": "function test_insufficientCrossChainGas() public {\n    // Send with minimal gas\n    bytes memory adapterParams = abi.encodePacked(uint16(1), uint256(100000));\n    // Verify execution succeeds on destination\n    // (requires fork test or mock)\n}",
+    "real_cases": ["decent-2024:H-02 (LayerZero gas)", "decent-2024:H-03 (refund encoding)"]
+  },
+  {
+    "id": "AP-08",
+    "name": "Non-Standard Token Behavior",
+    "root_cause": "token:non-standard",
+    "severity": "high",
+    "frequency": "high",
+    "protocol_types": ["all"],
+    "description": "未處理 fee-on-transfer、rebasing、ERC777 hook、decimals!=18 等非標準 token",
+    "check_steps": [
+      "搜尋所有 transferFrom，確認使用前後 balance diff 而非 amount",
+      "檢查是否支持 USDT（不回傳 bool 的 transfer）",
+      "確認 token decimals 不是硬編碼 18",
+      "檢查 rebasing token 的餘額變化處理",
+      "SafeERC20 是否被使用"
+    ],
+    "grep_patterns": [
+      "transferFrom",
+      "transfer(",
+      "decimals",
+      "safeTransfer",
+      "IERC20"
+    ],
+    "test_template": "function test_feeOnTransfer() public {\n    // Token takes 1% fee\n    uint256 balBefore = token.balanceOf(address(vault));\n    vault.deposit(1000e18);\n    uint256 balAfter = token.balanceOf(address(vault));\n    // Vault should use actual received, not input amount\n    assertEq(vault.totalDeposits(), balAfter - balBefore);\n}",
+    "real_cases": ["thorchain-2024:H-01 (AMPL rebasing)", "decent-2024:H-04 (WETH fallback)"]
+  },
+  {
+    "id": "AP-09",
+    "name": "Broken Liquidation Incentives",
+    "root_cause": "liquidation:broken-incentives",
+    "severity": "medium-high",
+    "frequency": "medium",
+    "protocol_types": ["lending"],
+    "description": "清算無利可圖（gas > reward）、可清算健康倉位、或清算者獎勵過高",
+    "check_steps": [
+      "計算最小清算的 gas 成本 vs 清算獎勵",
+      "確認 minLoanSize 或 minDebt 限制",
+      "驗證清算觸發條件（health factor < 1）",
+      "測試 dust amount 倉位是否可被清算",
+      "檢查清算者 bonus 百分比是否合理（通常 5-10%）"
+    ],
+    "grep_patterns": [
+      "liquidat",
+      "healthFactor",
+      "isHealthy",
+      "minDebt",
+      "liquidationBonus",
+      "liquidationThreshold"
+    ],
+    "test_template": "function test_dustPositionLiquidation() public {\n    // Create tiny position\n    vault.deposit(1 wei, user);\n    vault.borrow(1 wei, user);\n    // Make it liquidatable\n    oracle.setPrice(token, 0.5e18);\n    // Liquidation gas should be > reward\n    uint256 gasBefore = gasleft();\n    vault.liquidate(user);\n    uint256 gasUsed = gasBefore - gasleft();\n    // Assert incentive check\n}",
+    "real_cases": ["revert-lend-2024:M-03 (no minLoanSize)", "size-2024:H-03 (overcollateralized liquidation)"]
+  },
+  {
+    "id": "AP-10",
+    "name": "Missing State Pre-Update",
+    "root_cause": "state-update:missing-accrue",
+    "severity": "medium",
+    "frequency": "medium",
+    "protocol_types": ["lending", "vault", "staking"],
+    "description": "修改利率/費率參數前未先結算已累積的利息/獎勵，導致回溯性改變",
+    "check_steps": [
+      "找到所有 admin set* 函數（setFee, setRate, setReserve 等）",
+      "確認修改參數前是否呼叫 accrue() / updateRewards()",
+      "測試：先累積一段時間，再改參數，確認已累積部分不受影響",
+      "注意 block.timestamp 相關的累積邏輯"
+    ],
+    "grep_patterns": [
+      "function set",
+      "function update.*Rate",
+      "accrue",
+      "accrueInterest",
+      "updateReward"
+    ],
+    "test_template": "function test_missingAccrueBeforeUpdate() public {\n    // Deposit and wait\n    vault.deposit(1000e18, user);\n    vm.warp(block.timestamp + 30 days);\n    \n    // Record pending interest\n    uint256 pendingBefore = vault.pendingInterest();\n    \n    // Admin changes rate (should accrue first)\n    vm.prank(admin);\n    vault.setInterestRate(newRate);\n    \n    // Pending interest should be settled, not lost\n    assertEq(vault.accruedInterest(), pendingBefore);\n}",
+    "real_cases": ["revert-lend-2024:M-05 (setReserveFactor)", "size-2024 (rate changes)"]
+  }
+]

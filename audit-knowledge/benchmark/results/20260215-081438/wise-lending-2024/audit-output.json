@@ -1,0 +1,76 @@
+{
+  "findings": [
+    {
+      "id": "F-01",
+      "severity": "high",
+      "root_cause": "oracle:staleness-unchecked",
+      "title": "Oracle price staleness not checked",
+      "contract": "contracts/DerivativeOracles/CurveUsdEthOracle.sol",
+      "function": "Oracle call without staleness check",
+      "matches": 1
+    },
+    {
+      "id": "F-12",
+      "severity": "medium",
+      "root_cause": "interest:same-block-free-loan",
+      "title": "Same-block borrow/repay yields zero interest",
+      "contract": "contracts/DerivativeOracles/WethCustomOracle.t.sol",
+      "function": "Interest calculation may allow same-block free loans",
+      "matches": 1
+    },
+    {
+      "id": "F-14",
+      "severity": "high",
+      "root_cause": "reentrancy:erc721-callback",
+      "title": "ERC721 callback reentrancy risk",
+      "contract": "contracts/FeeManager/FeeManager.sol",
+      "function": "safeTransferFrom/safeMint without nonReentrant",
+      "matches": 1
+    },
+    {
+      "id": "F-15",
+      "severity": "high",
+      "root_cause": "dos:callback-griefing",
+      "title": "Callback-based DoS / griefing",
+      "contract": "contracts/FeeManager/FeeManager.sol",
+      "function": "Liquidation with external callback (griefing risk)",
+      "matches": 1
+    },
+    {
+      "id": "F-21",
+      "severity": "high",
+      "root_cause": "reentrancy:external-call-no-guard",
+      "title": "External call without reentrancy guard",
+      "contract": "contracts/InvariantSecurityTest.t.sol",
+      "function": "IERC20(tokens[i]).transfer(",
+      "matches": 2
+    },
+    {
+      "id": "F-27",
+      "severity": "high",
+      "root_cause": "access-control:missing-auth",
+      "title": "Missing access control on sensitive function",
+      "contract": "contracts/MockContracts/MockAaveToken.sol",
+      "function": "function withdraw(uint256 amount) external {",
+      "matches": 1
+    },
+    {
+      "id": "F-30",
+      "severity": "high",
+      "root_cause": "token:weth-fallback-logic",
+      "title": "WETH unwrap/fallback logic error",
+      "contract": "contracts/MockContracts/MockWeth.sol",
+      "function": "WETH unwrap with fallback handling",
+      "matches": 1
+    },
+    {
+      "id": "F-42",
+      "severity": "high",
+      "root_cause": "math:negative-tick-rounding",
+      "title": "Negative tick/value rounding error",
+      "contract": "contracts/PowerFarms/PendlePowerFarmController/PendlePowerFarmControllerBase.t.sol",
+      "function": "Integer division with potential negative rounding issue",
+      "matches": 1
+    }
+  ]
+}

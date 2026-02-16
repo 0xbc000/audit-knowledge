@@ -1,0 +1,49 @@
+{
+  "findings": [
+    {
+      "id": "F-01",
+      "severity": "high",
+      "root_cause": "token:rebasing-token-theft",
+      "title": "Rebasing/fee-on-transfer token not handled",
+      "contract": "avalanche/src/contracts/AvaxAggregator.sol",
+      "function": "Token transfer without balance-before-after check",
+      "matches": 1
+    },
+    {
+      "id": "F-03",
+      "severity": "high",
+      "root_cause": "access-control:missing-auth",
+      "title": "Missing access control on sensitive function",
+      "contract": "avalanche/src/interfaces/IAVAX.sol",
+      "function": "function withdraw(uint256) external;",
+      "matches": 1
+    },
+    {
+      "id": "F-09",
+      "severity": "high",
+      "root_cause": "reentrancy:external-call-no-guard",
+      "title": "External call without reentrancy guard",
+      "contract": "chain/ethereum/contracts/StealToken.sol",
+      "function": "try iERC20(target).transfer(to, value) {",
+      "matches": 1
+    },
+    {
+      "id": "F-18",
+      "severity": "high",
+      "root_cause": "reentrancy:erc721-callback",
+      "title": "ERC721 callback reentrancy risk",
+      "contract": "chain/ethereum/contracts/sushiswap/SushiRouterSmol.sol",
+      "function": "safeTransferFrom/safeMint without nonReentrant",
+      "matches": 1
+    },
+    {
+      "id": "F-19",
+      "severity": "high",
+      "root_cause": "token:weth-fallback-logic",
+      "title": "WETH unwrap/fallback logic error",
+      "contract": "chain/ethereum/contracts/sushiswap/SushiRouterSmol.sol",
+      "function": "WETH unwrap with fallback handling",
+      "matches": 1
+    }
+  ]
+}

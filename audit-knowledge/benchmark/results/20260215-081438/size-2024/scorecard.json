@@ -1,0 +1,30 @@
+{
+  "case_id": "size-2024",
+  "protocol_type": "lending",
+  "expected_count": 4,
+  "reported_count": 7,
+  "unique_reported": 7,
+  "true_positives": 0,
+  "false_positives": 7,
+  "duplicates": 0,
+  "missed": 4,
+  "recall": 0,
+  "precision": 0,
+  "f1": 0,
+  "duplicate_ratio": 0,
+  "missed_findings": [
+    "H-01: Swap fee 計算錯誤",
+    "H-02: 債務碎片化攻擊",
+    "H-03: 超額抵押仍可被清算",
+    "H-04: 利率操縱"
+  ],
+  "false_positive_list": [
+    "Same-block borrow/repay yields zero interest",
+    "Missing access control on sensitive function",
+    "Oracle price staleness not checked",
+    "ERC721 callback reentrancy risk",
+    "Rebasing/fee-on-transfer token not handled",
+    "External call without reentrancy guard",
+    "WETH unwrap/fallback logic error"
+  ]
+}

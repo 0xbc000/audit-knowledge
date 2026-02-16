@@ -1,0 +1,18 @@
+[
+  {
+    "id": "H-01",
+    "severity": "high",
+    "root_cause": "token:rebasing-token-theft",
+    "title": "Rebasing token (AMPL) 可盜取資金",
+    "contract": "THORChain_Router",
+    "function": "deposit"
+  },
+  {
+    "id": "H-02",
+    "severity": "high",
+    "root_cause": "access-control:transferout-no-auth",
+    "title": "transferOut 缺少授權檢查",
+    "contract": "THORChain_Router",
+    "function": "transferOut"
+  }
+]

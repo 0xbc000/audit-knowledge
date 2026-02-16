@@ -1,0 +1,100 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "created": "2026-02-15",
+    "description": "Ground-truth findings for benchmark. Each entry = one confirmed vulnerability from a completed audit.",
+    "metrics": {
+      "recall": "found / total_ground_truth",
+      "precision": "true_positives / (true_positives + false_positives)",
+      "duplicate_ratio": "duplicates_reported / total_reported"
+    }
+  },
+  "cases": [
+    {
+      "id": "revert-lend-2024",
+      "protocol_type": "lending",
+      "source_code_dir": "source-code/2024-03-revert-lend",
+      "findings": [
+        {"id": "H-01", "severity": "high", "root_cause": "input-validation:permit2-token-unverified", "title": "Permit2 未驗證 token 地址", "contract": "V3Vault", "function": "deposit"},
+        {"id": "H-02", "severity": "high", "root_cause": "reentrancy:erc721-callback", "title": "onERC721Received 重入攻擊", "contract": "V3Vault", "function": "onERC721Received"},
+        {"id": "H-03", "severity": "high", "root_cause": "input-validation:tokenid-unverified", "title": "transform() 未驗證 tokenId", "contract": "V3Vault", "function": "transform"},
+        {"id": "H-04", "severity": "high", "root_cause": "access-control:missing-auth", "title": "V3Utils.execute() 無權限控制", "contract": "V3Utils", "function": "execute"},
+        {"id": "H-05", "severity": "high", "root_cause": "math:negative-tick-rounding", "title": "TWAP 負數 tick 未向下取整", "contract": "V3Oracle", "function": "_getReferenceTokenPriceX96"},
+        {"id": "H-06", "severity": "high", "root_cause": "dos:callback-griefing", "title": "惡意 onERC721Received 阻止清算", "contract": "V3Vault", "function": "liquidate"},
+        {"id": "M-01", "severity": "medium", "root_cause": "limit-bypass:collateral-cap", "title": "繞過 collateral limit", "contract": "V3Vault", "function": "createLoan"},
+        {"id": "M-02", "severity": "medium", "root_cause": "dos:gas-griefing", "title": "AutoRange gas griefing", "contract": "AutoRange", "function": "executeWithVault"},
+        {"id": "M-03", "severity": "medium", "root_cause": "economic:unprofitable-liquidation", "title": "無 minLoanSize 導致清算無利可圖", "contract": "V3Vault", "function": "liquidate"},
+        {"id": "M-04", "severity": "medium", "root_cause": "interest:same-block-free-loan", "title": "同區塊免息貸款", "contract": "V3Vault", "function": "borrow"},
+        {"id": "M-05", "severity": "medium", "root_cause": "state-update:missing-accrue", "title": "setReserveFactor 未更新利息", "contract": "V3Vault", "function": "setReserveFactor"}
+      ]
+    },
+    {
+      "id": "zaros-2025",
+      "protocol_type": "perp-dex",
+      "source_code_dir": "source-code/zaros-part-1",
+      "findings": [
+        {"id": "C-01", "severity": "critical", "root_cause": "business-logic:weight-allocation-sum", "title": "Weight distribution bug - totalWeight = weight 而非 N*weight", "contract": "Vault", "function": "updateVaultAndCreditDelegationWeight"},
+        {"id": "H-01", "severity": "high", "root_cause": "business-logic:comparison-sign-inversion", "title": "比較運算符 .lt() vs .gt() 反轉", "contract": "CreditDelegationBranch", "function": "settleVaultDebts"}
+      ]
+    },
+    {
+      "id": "raac-2025",
+      "protocol_type": "nft-lending",
+      "source_code_dir": "source-code/2025-01-pieces-of-a-puzzle",
+      "findings": [
+        {"id": "H-01", "severity": "high", "root_cause": "oracle:staleness-unchecked", "title": "getNFTPrice 未檢查 timestamp", "contract": "LendingPool", "function": "getNFTPrice"},
+        {"id": "H-02", "severity": "high", "root_cause": "business-logic:hardcoded-return", "title": "getExchangeRate 回傳常數", "contract": "StabilityPool", "function": "getExchangeRate"},
+        {"id": "M-01", "severity": "medium", "root_cause": "liquidation:min-bid-missing", "title": "拍賣無最低首次出價", "contract": "NFTLiquidator", "function": "placeBid"},
+        {"id": "M-02", "severity": "medium", "root_cause": "reentrancy:external-call-no-guard", "title": "buyBackNFT 無 reentrancy guard", "contract": "NFTLiquidator", "function": "buyBackNFT"}
+      ]
+    },
+    {
+      "id": "wise-lending-2024",
+      "protocol_type": "lending",
+      "source_code_dir": "source-code/2024-02-wise-lending",
+      "findings": [
+        {"id": "H-01", "severity": "high", "root_cause": "reentrancy:guard-reset-via-receive", "title": "receive() 重置 reentrancy guard", "contract": "WiseLending", "function": "receive"},
+        {"id": "H-02", "severity": "high", "root_cause": "business-logic:debt-elimination", "title": "用戶可免費消除債務", "contract": "WiseLending", "function": "paybackExactShares"}
+      ]
+    },
+    {
+      "id": "decent-2024",
+      "protocol_type": "cross-chain-bridge",
+      "source_code_dir": "source-code/2024-01-decent",
+      "findings": [
+        {"id": "H-01", "severity": "high", "root_cause": "access-control:missing-onlyOwner", "title": "setRouter() 無權限控制", "contract": "UTBOwned", "function": "setRouter"},
+        {"id": "H-02", "severity": "high", "root_cause": "cross-chain:gas-insufficient", "title": "Gas 不足導致 LayerZero channel 阻塞", "contract": "DecentBridgeExecutor", "function": "execute"},
+        {"id": "H-03", "severity": "high", "root_cause": "cross-chain:refund-encoding-error", "title": "refund 地址編碼錯誤", "contract": "StargateBridgeAdapter", "function": "bridge"},
+        {"id": "H-04", "severity": "high", "root_cause": "token:weth-fallback-logic", "title": "WETH 不足時的回退邏輯錯誤", "contract": "UTB", "function": "swapAndExecute"}
+      ]
+    },
+    {
+      "id": "thorchain-2024",
+      "protocol_type": "cross-chain-bridge",
+      "source_code_dir": "source-code/2024-06-thorchain",
+      "findings": [
+        {"id": "H-01", "severity": "high", "root_cause": "token:rebasing-token-theft", "title": "Rebasing token (AMPL) 可盜取資金", "contract": "THORChain_Router", "function": "deposit"},
+        {"id": "H-02", "severity": "high", "root_cause": "access-control:transferout-no-auth", "title": "transferOut 缺少授權檢查", "contract": "THORChain_Router", "function": "transferOut"}
+      ]
+    },
+    {
+      "id": "size-2024",
+      "protocol_type": "lending",
+      "source_code_dir": "source-code/2024-06-size",
+      "findings": [
+        {"id": "H-01", "severity": "high", "root_cause": "math:swap-fee-calculation", "title": "Swap fee 計算錯誤", "contract": "Size", "function": "buyCreditMarket"},
+        {"id": "H-02", "severity": "high", "root_cause": "business-logic:fragmentation-attack", "title": "債務碎片化攻擊", "contract": "Size", "function": "sellCreditMarket"},
+        {"id": "H-03", "severity": "high", "root_cause": "liquidation:overcollateralized-liquidation", "title": "超額抵押仍可被清算", "contract": "Size", "function": "liquidate"},
+        {"id": "H-04", "severity": "high", "root_cause": "business-logic:rate-manipulation", "title": "利率操縱", "contract": "Size", "function": "buyCreditMarket"}
+      ]
+    },
+    {
+      "id": "sentiment-v2-2024",
+      "protocol_type": "lending",
+      "source_code_dir": "source-code/2024-08-sentiment-v2",
+      "findings": [
+        {"id": "H-01", "severity": "high", "root_cause": "business-logic:multi-collateral-ratio", "title": "多抵押品比率計算錯誤", "contract": "RiskEngine", "function": "isPositionHealthy"}
+      ]
+    }
+  ]
+}

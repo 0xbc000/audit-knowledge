@@ -1,0 +1,22 @@
+{
+  "case_id": "decent-2024",
+  "protocol_type": "cross-chain-bridge",
+  "expected_count": 4,
+  "reported_count": 0,
+  "unique_reported": 0,
+  "true_positives": 0,
+  "false_positives": 0,
+  "duplicates": 0,
+  "missed": 4,
+  "recall": 0,
+  "precision": 0,
+  "f1": 0,
+  "duplicate_ratio": 0,
+  "missed_findings": [
+    "H-01: setRouter() 無權限控制",
+    "H-02: Gas 不足導致 LayerZero channel 阻塞",
+    "H-03: refund 地址編碼錯誤",
+    "H-04: WETH 不足時的回退邏輯錯誤"
+  ],
+  "false_positive_list": []
+}

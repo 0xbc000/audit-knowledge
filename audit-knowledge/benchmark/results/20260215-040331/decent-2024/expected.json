@@ -1,0 +1,34 @@
+[
+  {
+    "id": "H-01",
+    "severity": "high",
+    "root_cause": "access-control:missing-onlyOwner",
+    "title": "setRouter() 無權限控制",
+    "contract": "UTBOwned",
+    "function": "setRouter"
+  },
+  {
+    "id": "H-02",
+    "severity": "high",
+    "root_cause": "cross-chain:gas-insufficient",
+    "title": "Gas 不足導致 LayerZero channel 阻塞",
+    "contract": "DecentBridgeExecutor",
+    "function": "execute"
+  },
+  {
+    "id": "H-03",
+    "severity": "high",
+    "root_cause": "cross-chain:refund-encoding-error",
+    "title": "refund 地址編碼錯誤",
+    "contract": "StargateBridgeAdapter",
+    "function": "bridge"
+  },
+  {
+    "id": "H-04",
+    "severity": "high",
+    "root_cause": "token:weth-fallback-logic",
+    "title": "WETH 不足時的回退邏輯錯誤",
+    "contract": "UTB",
+    "function": "swapAndExecute"
+  }
+]

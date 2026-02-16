@@ -1,0 +1,10 @@
+[
+  {
+    "id": "H-01",
+    "severity": "high",
+    "root_cause": "business-logic:multi-collateral-ratio",
+    "title": "多抵押品比率計算錯誤",
+    "contract": "RiskEngine",
+    "function": "isPositionHealthy"
+  }
+]
