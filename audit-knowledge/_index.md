@@ -28,9 +28,9 @@ audit-knowledge/
 └── agent/                    # Agent 配置
 ```
 
-## Current Stats (2026-02-19)
+## Current Stats (2026-02-22)
 
-- Vulnerability patterns: **56** (+4 signature patterns)
+- Vulnerability patterns: **64** (+8 liquidation patterns)
 - Protocol invariant sets: **9**
 - Case studies: **13**
 - Source-code repos: **11**
